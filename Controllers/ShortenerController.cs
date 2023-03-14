@@ -1,8 +1,7 @@
-﻿using LinkShortener.Model;
+﻿using LinkShortener.Models;
 using LinkShortener.Services.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Web;
 
 namespace LinkShortener.Controllers
 {
@@ -20,47 +19,47 @@ namespace LinkShortener.Controllers
             _assignLinkService = assignService;
         }
 
-        [Route("ShortUrl/{url}")]
-        [HttpGet]       
-        public ActionResult<LinkModel> AssignLinkToShortPost(string url)
-        {
-            try
-            {
-                var assignLink = _assignLinkService.AssignLink(url);
-
-                if (string.IsNullOrEmpty(assignLink))
-                {
-                    return BadRequest();
-                }
-
-                return StatusCode(StatusCodes.Status201Created, assignLink);
-            }
-            catch (Exception)
-            {
-                throw new Exception();
-            }
-        }
-
         [EnableCors("My Policy")]
-        [Route("Me.Leva.La/{url}")]
-        [HttpGet]
-        public IActionResult LevaLaShortenUrl(string url)
+        [Route("ShortUrl")]
+        [HttpPost]
+        public ActionResult<UrlModel> AssignLinkToShortPost([FromBody] string url)
         {
-            try
-            {
-                var redirectUrl = _assignLinkService.GetAssignLink(url);
 
-                if (string.IsNullOrEmpty(redirectUrl))
-                {
-                    return BadRequest();
-                }
-
-                return Redirect(redirectUrl);
-            }
-            catch (Exception)
+            if (string.IsNullOrEmpty(url))
             {
-                throw new Exception();
+                return StatusCode(StatusCodes.Status400BadRequest, url);
             }
+
+            var assignLink = _assignLinkService.AssignShortId(url);
+
+            if (string.IsNullOrEmpty(assignLink))
+            {
+                return BadRequest();
+            }
+
+            return StatusCode(StatusCodes.Status201Created, assignLink);
         }
+
+
+        //[Route("Me.Leva.La/{url}")]
+        //[HttpGet]
+        //public IActionResult LevaLaShortenUrl(string url)
+        //{
+        //    try
+        //    {
+        //        var redirectUrl = _assignLinkService.GetAssignLink(url);
+
+        //        if (string.IsNullOrEmpty(redirectUrl))
+        //        {
+        //            return BadRequest();
+        //        }
+
+        //        return Redirect(redirectUrl);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw new Exception();
+        //    }
+        //}
     }
 }

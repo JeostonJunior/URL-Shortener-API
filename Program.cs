@@ -1,7 +1,7 @@
-using LinkShortener.Model;
-using LinkShortener.Models.Interfaces;
+using LinkShortener.Context;
 using LinkShortener.Services;
 using LinkShortener.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +15,10 @@ builder.Services.AddCors(options => options.
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.
-    AddSingleton<IAssignLinkService, AssignLinkService>().
-    AddSingleton<ILinkModel, LinkModel>();
+builder.Services
+    .AddSingleton<IAssignLinkService, AssignLinkService>()
+    .AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
 
 builder.Services.AddSwaggerGen();
 

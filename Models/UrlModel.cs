@@ -1,6 +1,6 @@
-﻿namespace LinkShortener.Models.Interfaces
+﻿namespace LinkShortener.Models
 {
-    public interface ILinkModel
+    public class UrlModel
     {
         public string FullUrl { get; set; }
         public string ShortUrl { get; set; }

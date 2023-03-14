@@ -1,4 +1,4 @@
-﻿using LinkShortener.Models.Interfaces;
+﻿using LinkShortener.Models;
 using LinkShortener.Services.Interfaces;
 using shortid;
 using shortid.Configuration;
@@ -12,31 +12,31 @@ namespace LinkShortener.Services
 
         private Dictionary<string, string> _ShortIdStore;
 
-        private ILinkModel _linkModel;
+        private UrlModel _UrlModel;
 
-        public AssignLinkService(ILinkModel linkModel)
+        public AssignLinkService(UrlModel urlModel)
         {
             _ShortIdStore = new Dictionary<string, string>();
-            _linkModel = linkModel;
+            _UrlModel = urlModel;
         }
 
-        public string AssignLink(string fullUrl)
+        public string AssignShortId(string fullUrl)
         {
             try
             {
                 var shortIdOptions = new GenerationOptions(useNumbers: true, useSpecialCharacters: false, length: LENGTH);
 
-                var shortUrl = ShortId.Generate(shortIdOptions);
+                var encodedIdGenerate = ShortId.Generate(shortIdOptions);
 
-                _linkModel.FullUrl = HttpUtility.UrlDecode(fullUrl);
+                _UrlModel.FullUrl = HttpUtility.UrlDecode(fullUrl);
 
-                _linkModel.ShortUrl = shortUrl;
+                _UrlModel.ShortUrl = encodedIdGenerate;
 
-                _ShortIdStore.Add(_linkModel.ShortUrl, _linkModel.FullUrl);
+                _ShortIdStore.Add(_UrlModel.ShortUrl, _UrlModel.FullUrl);
 
-                return _linkModel.ShortUrl;
+                return _UrlModel.ShortUrl;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception();
             }
