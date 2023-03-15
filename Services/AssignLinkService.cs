@@ -14,10 +14,10 @@ namespace LinkShortener.Services
 
         private UrlModel _UrlModel;
 
-        public AssignLinkService(UrlModel urlModel)
+        public AssignLinkService()
         {
             _ShortIdStore = new Dictionary<string, string>();
-            _UrlModel = urlModel;
+            _UrlModel = new UrlModel();
         }
 
         public string AssignShortId(string fullUrl)

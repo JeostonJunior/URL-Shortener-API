@@ -1,6 +1,5 @@
 ﻿using LinkShortener.Models;
 using LinkShortener.Services.Interfaces;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinkShortener.Controllers
@@ -19,7 +18,6 @@ namespace LinkShortener.Controllers
             _assignLinkService = assignService;
         }
 
-        [EnableCors("My Policy")]
         [Route("ShortUrl")]
         [HttpPost]
         public ActionResult<UrlModel> AssignLinkToShortPost([FromBody] string url)

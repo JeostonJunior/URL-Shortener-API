@@ -6,19 +6,14 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddCors(options => options.
-    AddPolicy("My Policy",
-    police =>
-    {
-        police.WithOrigins("https://localhost:7275");
-    }));
+
+var connectionString = builder.Configuration.GetConnectionString("ServerConnection");
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services
-    .AddSingleton<IAssignLinkService, AssignLinkService>()
-    .AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<IAssignLinkService, AssignLinkService>();
 
 builder.Services.AddSwaggerGen();
 
@@ -30,14 +25,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseCors(options =>
-{
-    options.
-    WithOrigins("My Policy").
-    AllowAnyMethod().
-    AllowAnyHeader();
-});
 
 app.UseHttpsRedirection();
 
