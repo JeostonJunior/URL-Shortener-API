@@ -5,7 +5,7 @@
 namespace LinkShortener.Migrations
 {
     /// <inheritdoc />
-    public partial class LinkShortenerFirstMigration : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

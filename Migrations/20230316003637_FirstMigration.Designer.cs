@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LinkShortener.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230315055019_LinkShortenerFirstMigration")]
-    partial class LinkShortenerFirstMigration
+    [Migration("20230316003637_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

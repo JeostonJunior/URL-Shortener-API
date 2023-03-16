@@ -6,8 +6,10 @@ namespace LinkShortener.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Informe a Url", AllowEmptyStrings = false)]
         public string FullUrl { get; set; }
+
         [Required]
         public string ShortUrl { get; set; }
     }
