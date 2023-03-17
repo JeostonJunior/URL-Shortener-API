@@ -2,16 +2,14 @@
 using LinkShortener.Services.Interfaces;
 using shortid;
 using shortid.Configuration;
-using System.Web;
 
 namespace LinkShortener.Services
 {
     public class AssignLinkService : IAssignLinkService
     {
         private const int LENGTH = 8;
-
+        private const string DOMAIN = "TinyUrl/";
         private Dictionary<string, string> _ShortIdStore;
-
         private UrlModel _UrlModel;
 
         public AssignLinkService()
@@ -20,32 +18,41 @@ namespace LinkShortener.Services
             _UrlModel = new UrlModel();
         }
 
-        public string AssignShortId(string fullUrl)
+        public string AssignShortId(TinyUrlRequest tinyUrl)
         {
+
+            var fullUrl = "";
+
             try
             {
-                var shortIdOptions = new GenerationOptions(useNumbers: true, useSpecialCharacters: false, length: LENGTH);
-
-                var encodedIdGenerate = ShortId.Generate(shortIdOptions);
-
-                _UrlModel.FullUrl = HttpUtility.UrlDecode(fullUrl);
-
-                _UrlModel.ShortUrl = encodedIdGenerate;
-
-                _ShortIdStore.Add(_UrlModel.ShortUrl, _UrlModel.FullUrl);
-
-                return _UrlModel.ShortUrl;
+                fullUrl = tinyUrl.FullUrl;
             }
             catch (Exception)
             {
+
                 throw new Exception();
             }
+
+            var shortedUrl = GenerateShortUrl(tinyUrl.Prefix);
+
+            return shortedUrl;
         }
 
-        public string GetAssignLink(string shortUrl)
+        private string GenerateShortUrl(string prefix)
         {
-            var decodedShortUlr = shortUrl.ToString();
-            return _ShortIdStore[decodedShortUlr];
+            try
+            {
+                var generateShortIdOptions = new GenerationOptions(useNumbers: true, useSpecialCharacters: false, length: LENGTH);
+
+                var generateEncodedId = ShortId.Generate(generateShortIdOptions);
+
+                return $"{DOMAIN}{prefix}{generateEncodedId}";
+            }
+            catch (Exception)
+            {
+
+                throw new Exception();
+            }
         }
     }
 }
