@@ -1,6 +1,7 @@
 ﻿using LinkShortener.Models;
 using LinkShortener.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace LinkShortener.Controllers
 {
@@ -30,5 +31,26 @@ namespace LinkShortener.Controllers
 
             return StatusCode(StatusCodes.Status201Created, assignLink);
         }
+
+        [HttpGet, Route("TinyUrl/{url}")]
+        public IActionResult RedirectToUrl(string url)
+        {
+            try
+            {
+                var redirectUrl = _assignLinkService.GetAssignLink(url);
+
+                if (string.IsNullOrEmpty(redirectUrl))
+                {
+                    return BadRequest();
+                }
+
+                return Redirect(redirectUrl);
+            }
+            catch (Exception)
+            {
+                throw new Exception();
+            }
+        }
+
     }
 }
