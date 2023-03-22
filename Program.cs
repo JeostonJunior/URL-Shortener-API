@@ -1,4 +1,5 @@
 using LinkShortener.Context;
+using LinkShortener.Repository;
 using LinkShortener.Services;
 using LinkShortener.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ var connectionString = builder.Configuration.GetConnectionString("ServerConnecti
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IAssignLinkService, AssignLinkService>();
 
