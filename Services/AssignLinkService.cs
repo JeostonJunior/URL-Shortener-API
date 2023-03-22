@@ -1,5 +1,5 @@
-﻿using LinkShortener.Models;
-using LinkShortener.Repository;
+﻿using LinkShortener.Context;
+using LinkShortener.Models;
 using LinkShortener.Services.Interfaces;
 using shortid;
 using shortid.Configuration;
@@ -15,11 +15,11 @@ namespace LinkShortener.Services
 
         private UrlModel _urlModel;
 
-        private readonly IUnitOfWork _uof;
+        private readonly AppDbContext _context;
 
-        public AssignLinkService(IUnitOfWork appDbContext)
+        public AssignLinkService(AppDbContext appDbContext)
         {
-            _uof = appDbContext;
+            _context = appDbContext;
         }
 
         public string AssignShortId(TinyUrlRequest tinyUrl)
@@ -50,9 +50,9 @@ namespace LinkShortener.Services
             {
                 url = HttpUtility.UrlDecode(url);
 
-                var findFullUrl = _uof.UrlRepository.GetById(url);
+                var findFullUrl = _context.Urls.FirstOrDefault(urlFind => urlFind.ShortUrl == url);
 
-                if (string.IsNullOrEmpty(findFullUrl.FullUrl))
+                if(findFullUrl is null)
                 {
                     return string.Empty;
                 }
@@ -87,8 +87,8 @@ namespace LinkShortener.Services
             {
                 _urlModel = new UrlModel { FullUrl = fullUrl, ShortUrl = shortUrl };
 
-                _uof.UrlRepository.Add(_urlModel);
-                _uof.Commit();
+                _context.Urls.Add(_urlModel);
+                _context.SaveChanges();
 
                 return _urlModel.ShortUrl;
             }
