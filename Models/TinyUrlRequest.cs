@@ -6,10 +6,5 @@ namespace LinkShortener.Models
     {
         [Required(ErrorMessage = "Insira uma Url")]
         public string FullUrl { get; set; }
-
-        public TinyUrlRequest(string fullUrl)
-        {
-            FullUrl = fullUrl;            
-        }
     }
 }
