@@ -18,7 +18,7 @@ namespace LinkShortener.Controllers
         }
 
         [HttpPost, Route("FullUrl")]
-        public ActionResult<TinyUrlRequest> AssignLinkToShortPost([FromBody] TinyUrlRequest url)
+        public ActionResult<TinyUrlRequest> AssignLinkToShortUrl([FromBody] TinyUrlRequest url)
         {
             var assignLink = _assignLinkService.AssignShortId(url);
 
@@ -33,21 +33,14 @@ namespace LinkShortener.Controllers
         [HttpGet, Route("TinyUrl/{url}")]
         public IActionResult RedirectToUrl(string url)
         {
-            try
-            {
-                var redirectUrl = _assignLinkService.GetAssignLink(url);
+            var redirectUrl = _assignLinkService.GetAssignLink(url);
 
-                if (string.IsNullOrEmpty(redirectUrl))
-                {
-                    return BadRequest();
-                }
-
-                return Redirect(redirectUrl);
-            }
-            catch (Exception)
+            if (string.IsNullOrEmpty(redirectUrl))
             {
-                throw new Exception();
+                return BadRequest();
             }
+
+            return Redirect(redirectUrl);
         }
 
     }
