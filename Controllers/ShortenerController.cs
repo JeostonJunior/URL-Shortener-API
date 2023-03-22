@@ -1,7 +1,6 @@
 ﻿using LinkShortener.Models;
 using LinkShortener.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
 
 namespace LinkShortener.Controllers
 {
@@ -18,8 +17,7 @@ namespace LinkShortener.Controllers
             _assignLinkService = assignService;
         }
 
-        [Route("ShortUrl")]
-        [HttpPost]
+        [HttpPost, Route("FullUrl")]
         public ActionResult<TinyUrlRequest> AssignLinkToShortPost([FromBody] TinyUrlRequest url)
         {
             var assignLink = _assignLinkService.AssignShortId(url);
