@@ -1,8 +1,6 @@
-﻿using LinkShortener.Model;
+﻿using LinkShortener.Models;
 using LinkShortener.Services.Interfaces;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Web;
 
 namespace LinkShortener.Controllers
 {
@@ -13,38 +11,27 @@ namespace LinkShortener.Controllers
         private readonly ILogger<ShortenerController> _logger;
         private readonly IAssignLinkService _assignLinkService;
 
-
         public ShortenerController(ILogger<ShortenerController> logger, IAssignLinkService assignService)
         {
             _logger = logger;
             _assignLinkService = assignService;
         }
 
-        [Route("ShortUrl/{url}")]
-        [HttpGet]       
-        public ActionResult<LinkModel> AssignLinkToShortPost(string url)
+        [HttpPost, Route("FullUrl")]
+        public ActionResult<TinyUrlRequest> AssignLinkToShortPost([FromBody] TinyUrlRequest url)
         {
-            try
-            {
-                var assignLink = _assignLinkService.AssignLink(url);
+            var assignLink = _assignLinkService.AssignShortId(url);
 
-                if (string.IsNullOrEmpty(assignLink))
-                {
-                    return BadRequest();
-                }
-
-                return StatusCode(StatusCodes.Status201Created, assignLink);
-            }
-            catch (Exception)
+            if (string.IsNullOrEmpty(assignLink))
             {
-                throw new Exception();
+                return BadRequest();
             }
+
+            return StatusCode(StatusCodes.Status201Created, assignLink);
         }
 
-        [EnableCors("My Policy")]
-        [Route("Me.Leva.La/{url}")]
-        [HttpGet]
-        public IActionResult LevaLaShortenUrl(string url)
+        [HttpGet, Route("TinyUrl/{url}")]
+        public IActionResult RedirectToUrl(string url)
         {
             try
             {
@@ -62,5 +49,6 @@ namespace LinkShortener.Controllers
                 throw new Exception();
             }
         }
+
     }
 }

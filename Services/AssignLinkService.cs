@@ -1,4 +1,5 @@
-﻿using LinkShortener.Models.Interfaces;
+﻿using LinkShortener.Context;
+using LinkShortener.Models;
 using LinkShortener.Services.Interfaces;
 using shortid;
 using shortid.Configuration;
@@ -9,43 +10,92 @@ namespace LinkShortener.Services
     public class AssignLinkService : IAssignLinkService
     {
         private const int LENGTH = 8;
+        private const string DOMAIN = "TinyUrl/";
+        private const string HOST = "https://localhost:7275/";
 
-        private Dictionary<string, string> _ShortIdStore;
+        private UrlModel _urlModel;
 
-        private ILinkModel _linkModel;
+        private readonly AppDbContext _context;
 
-        public AssignLinkService(ILinkModel linkModel)
+        public AssignLinkService(AppDbContext appDbContext)
         {
-            _ShortIdStore = new Dictionary<string, string>();
-            _linkModel = linkModel;
+            _context = appDbContext;
         }
 
-        public string AssignLink(string fullUrl)
+        public string AssignShortId(TinyUrlRequest tinyUrl)
+        {
+
+            Uri fullUrl = null;
+
+            try
+            {
+                fullUrl = new Uri(tinyUrl.FullUrl);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception();
+            }
+
+            var generatedShortedUrl = GenerateShortUrl();
+
+            var shortenedUrl = ContextDB(fullUrl.ToString(), generatedShortedUrl);
+
+            return $"{HOST}{DOMAIN}{shortenedUrl}";
+        }
+
+        public string GetAssignLink(string url)
         {
             try
             {
-                var shortIdOptions = new GenerationOptions(useNumbers: true, useSpecialCharacters: false, length: LENGTH);
+                url = HttpUtility.UrlDecode(url);
 
-                var shortUrl = ShortId.Generate(shortIdOptions);
+                var findFullUrl = _context.Urls.FirstOrDefault(urlFind => urlFind.ShortUrl == url);
 
-                _linkModel.FullUrl = HttpUtility.UrlDecode(fullUrl);
+                if(findFullUrl is null)
+                {
+                    return string.Empty;
+                }
 
-                _linkModel.ShortUrl = shortUrl;
-
-                _ShortIdStore.Add(_linkModel.ShortUrl, _linkModel.FullUrl);
-
-                return _linkModel.ShortUrl;
+                return findFullUrl.FullUrl;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception();
             }
         }
 
-        public string GetAssignLink(string shortUrl)
+        private string GenerateShortUrl()
         {
-            var decodedShortUlr = shortUrl.ToString();
-            return _ShortIdStore[decodedShortUlr];
+            try
+            {
+                var generateShortIdOptions = new GenerationOptions(useNumbers: true, useSpecialCharacters: false, length: LENGTH);
+
+                var generateEncodedId = ShortId.Generate(generateShortIdOptions);
+
+                return generateEncodedId;
+            }
+            catch (Exception)
+            {
+                throw new Exception();
+            }
+        }
+
+        private string ContextDB(string fullUrl, string shortUrl)
+        {
+            try
+            {
+                _urlModel = new UrlModel { FullUrl = fullUrl, ShortUrl = shortUrl };
+
+                _context.Urls.Add(_urlModel);
+                _context.SaveChanges();
+
+                return _urlModel.ShortUrl;
+            }
+            catch (Exception)
+            {
+                throw new Exception();
+            }
         }
     }
 }
