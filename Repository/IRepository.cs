@@ -2,7 +2,8 @@
 {
     public interface IRepository<T>
     {
-        T GetById(string url);
+        T GetShortUrl(string url);
+        T GetFullUrl(string url);
         void Add(T entity);
     }
 }

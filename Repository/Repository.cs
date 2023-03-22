@@ -17,9 +17,15 @@ namespace LinkShortener.Repository
             _context.Add(entity);
         }
 
-        public UrlModel GetById(string url)
+
+        public UrlModel GetFullUrl(string url)
         {
-            return _context.Urls.Where(id => id.ShortUrl.Equals(url)).SingleOrDefault();
+            return _context.Urls.Where(id => id.FullUrl.Equals(url)).FirstOrDefault();
+        }
+
+        public UrlModel GetShortUrl(string url)
+        {
+            return _context.Urls.Where(id => id.ShortUrl.Equals(url)).FirstOrDefault();
         }
     }
 }

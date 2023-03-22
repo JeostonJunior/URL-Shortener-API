@@ -33,7 +33,7 @@ namespace LinkShortener.Controllers
         [HttpGet, Route("TinyUrl/{url}")]
         public IActionResult RedirectToUrl(string url)
         {
-            var redirectUrl = _assignLinkService.GetAssignLink(url);
+            var redirectUrl = _assignLinkService.GetFullAssignLink(url);
 
             if (string.IsNullOrEmpty(redirectUrl))
             {

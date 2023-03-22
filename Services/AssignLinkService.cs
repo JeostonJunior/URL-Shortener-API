@@ -37,20 +37,48 @@ namespace LinkShortener.Services
                 throw new Exception();
             }
 
-            var generatedShortedUrl = GenerateShortUrl();
+            var getShortLink = GetShortAssignLink(fullUrl.ToString());
 
-            var shortenedUrl = ContextDB(fullUrl.ToString(), generatedShortedUrl);
-
-            return $"{HOST}{DOMAIN}{shortenedUrl}";
+            if (string.IsNullOrEmpty(getShortLink))
+            {
+                var generatedShortedUrl = GenerateShortUrl();
+                var shortenedUrl = ContextDB(fullUrl.ToString(), generatedShortedUrl);
+                return $"{HOST}{DOMAIN}{shortenedUrl}";
+            }
+            
+            return $"{HOST}{DOMAIN}{getShortLink}";
         }
 
-        public string GetAssignLink(string url)
+        public string GetShortAssignLink(string url)
         {
             try
             {
                 url = HttpUtility.UrlDecode(url);
 
-                var findFullUrl = _uof.UrlRepository.GetById(url);
+                var findFullUrl = _uof.UrlRepository.GetFullUrl(url);
+
+                if (string.IsNullOrEmpty(findFullUrl.ShortUrl))
+                {
+                    return string.Empty;
+                }
+
+                return findFullUrl.ShortUrl;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception();
+            }
+        }
+
+
+        public string GetFullAssignLink(string url)
+        {
+            try
+            {
+                url = HttpUtility.UrlDecode(url);
+
+                var findFullUrl = _uof.UrlRepository.GetShortUrl(url);
 
                 if (string.IsNullOrEmpty(findFullUrl.FullUrl))
                 {
